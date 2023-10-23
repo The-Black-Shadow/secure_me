@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:secure_me/components/button.dart';
 import 'package:secure_me/components/textfield.dart';
@@ -16,6 +17,39 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  //log in function
+  void logIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } on FirebaseAuthException catch (e) {
+      displamessage(e.code);
+    }
+  }
+
+  //display auth error message
+  void displamessage(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              const SizedBox(height: 150),
+              const SizedBox(height: 55),
               //logo
               const Icon(
                 Icons.security,
@@ -55,7 +89,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               //login button
-              MyButton(onTap: () {}, text: 'Log In'),
+              MyButton(
+                onTap: logIn,
+                text: 'Log In',
+              ),
               const SizedBox(height: 20),
               //register button
               Row(
