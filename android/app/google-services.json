@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "637704017726",
+    "project_id": "sec-ure-me",
+    "storage_bucket": "sec-ure-me.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637704017726:android:d18e7e78f9d8335e5c3e6f",
+        "android_client_info": {
+          "package_name": "com.tshadow.secureme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtNi_pqv57sDWVsA6Svs66b6rHeHJzuuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
