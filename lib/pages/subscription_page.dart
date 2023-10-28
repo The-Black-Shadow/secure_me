@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:secure_me/components/subscriptions_model.dart';
 
 class MySubscription extends StatefulWidget {
   const MySubscription({super.key});
@@ -9,26 +10,59 @@ class MySubscription extends StatefulWidget {
 }
 
 class _MySubscriptionState extends State<MySubscription> {
-  void showPlan(String planName) {
+  final brandController = TextEditingController();
+  final regController = TextEditingController();
+  final engineController = TextEditingController();
+  String? planName;
+  String? planPrice;
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  Future addPlan(planName, planPrice) async {
+    addUserData(planName, brandController.text, regController.text,
+        engineController.text);
+  }
+
+  Future addUserData(
+    String name,
+    String carModel,
+    String regNo,
+    String carEngine,
+  ) async {
+    await FirebaseFirestore.instance
+        .collection("Subscriptions")
+        .doc(currentUser.email)
+        .collection('Plans')
+        .add({
+      'Package': name,
+      'Car Model': carModel,
+      'Car Reg': regNo,
+      'Car Engine': carEngine,
+    });
+  }
+
+  void buyPlan(String planNamee, String price) {
+    planPrice = price;
+    planName = planNamee;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('You have selected $planName'),
         backgroundColor: Colors.cyan[200],
-        content: Container(
+        content: SizedBox(
           height: 400,
           width: 300,
           child: Column(
             children: [
               const Text(
-                'Enter Your Car Model Name : ',
+                'Enter Your Car Brand Name : ',
                 textAlign: TextAlign.start,
               ),
               const SizedBox(height: 10.0),
               TextFormField(
+                controller: brandController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: 'Car Model Name',
+                  hintText: 'Car Brand Name',
                 ),
               ),
               const SizedBox(height: 10.0),
@@ -39,6 +73,7 @@ class _MySubscriptionState extends State<MySubscription> {
               ),
               const SizedBox(height: 10.0),
               TextFormField(
+                controller: regController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Car Registration Details',
@@ -52,6 +87,7 @@ class _MySubscriptionState extends State<MySubscription> {
               ),
               const SizedBox(height: 10.0),
               TextFormField(
+                controller: engineController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'Car Engine Number',
@@ -66,7 +102,10 @@ class _MySubscriptionState extends State<MySubscription> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => {
+              addPlan(planName, planPrice),
+              Navigator.pop(context),
+            },
             child: const Text('Purchase'),
           ),
         ],
@@ -124,8 +163,8 @@ class _MySubscriptionState extends State<MySubscription> {
                           const Text('7. 1 Location'),
                           const Text('8. 1 Emergency Contact'),
                           ElevatedButton(
-                            onPressed: () => {},
-                            child: const Text('\$25 Purchase'),
+                            onPressed: () => buyPlan('Basic Plan', '\$50'),
+                            child: const Text('\$50 Purchase'),
                           ),
                         ],
                       ),
@@ -173,7 +212,7 @@ class _MySubscriptionState extends State<MySubscription> {
                           const Text('7. 1 Location'),
                           const Text('8. 1 Emergency Contact'),
                           ElevatedButton(
-                            onPressed: () => {},
+                            onPressed: () => buyPlan('Standard Plan', '\$75'),
                             child: const Text('\$75 Purchase'),
                           ),
                         ],
@@ -222,7 +261,7 @@ class _MySubscriptionState extends State<MySubscription> {
                           const Text('7. 1 Location'),
                           const Text('8. 1 Emergency Contact'),
                           ElevatedButton(
-                            onPressed: () => {},
+                            onPressed: () => buyPlan('Premium Plan', '\$120'),
                             child: const Text('\$120 Purchase'),
                           ),
                         ],
@@ -232,6 +271,7 @@ class _MySubscriptionState extends State<MySubscription> {
                 ],
               ),
             ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
