@@ -13,8 +13,47 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   //current user
   final currentUser = FirebaseAuth.instance.currentUser!;
+  //all users
+  final allUser = FirebaseFirestore.instance.collection('Users');
   //edit field
-  Future<void> editField(String field) async {}
+  Future<void> editField(String field) async {
+    String newValue = '';
+    //get value
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit $field'),
+        backgroundColor: Colors.cyan[200],
+        content: TextField(
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: 'Enter new $field',
+          ),
+          onChanged: (value) {
+            newValue = value;
+          },
+        ),
+        actions: [
+          //cancel button
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+
+          //save button
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(newValue),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (newValue.isNotEmpty) {
+      await allUser.doc(currentUser.email).update({field: newValue});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,17 +100,17 @@ class _ProfilePageState extends State<ProfilePage> {
                 MyTextBox(
                     sectionName: 'Name : ',
                     text: userData['Name'],
-                    onPressed: () => editField('username')),
+                    onPressed: () => editField('Name')),
                 //phone
                 MyTextBox(
                     sectionName: 'Phone : ',
                     text: userData['Phone'],
-                    onPressed: () => editField('phone')),
+                    onPressed: () => editField('Phone')),
                 //address
                 MyTextBox(
                     sectionName: 'Address',
                     text: userData['Address'],
-                    onPressed: () => editField('address')),
+                    onPressed: () => editField('Address')),
               ],
             );
           } else if (snapshot.hasError) {
