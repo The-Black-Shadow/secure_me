@@ -1,21 +1,240 @@
 import 'package:flutter/material.dart';
+import 'package:secure_me/components/subscriptions_model.dart';
 
-class Subscription extends StatefulWidget {
-  const Subscription({super.key});
+class MySubscription extends StatefulWidget {
+  const MySubscription({super.key});
 
   @override
-  State<Subscription> createState() => _SubscriptionState();
+  State<MySubscription> createState() => _MySubscriptionState();
 }
 
-class _SubscriptionState extends State<Subscription> {
+class _MySubscriptionState extends State<MySubscription> {
+  void showPlan(String planName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('You have selected $planName'),
+        backgroundColor: Colors.cyan[200],
+        content: Container(
+          height: 400,
+          width: 300,
+          child: Column(
+            children: [
+              const Text(
+                'Enter Your Car Model Name : ',
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 10.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Car Model Name',
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              //Car registration number
+              const Text(
+                'Enter Car Registration Number : ',
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 10.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Car Registration Details',
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              //Car engine number
+              const Text(
+                'Enter Car Engine Number : ',
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 10.0),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Car Engine Number',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Purchase'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.cyan[300],
       appBar: AppBar(
-        title: const Text('Subscription Page'),
+        title: const Text('Subscription'),
         backgroundColor: Colors.cyan[800],
       ),
-      body: Text('Subscription Page'),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            //Basic Plan
+            Container(
+              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.cyan[200],
+                border: Border.all(color: Colors.grey),
+              ),
+              padding: const EdgeInsets.all(10.0),
+              child: ExpansionTile(
+                title: const Text('Basic Plan'),
+                children: [
+                  Card(
+                    shadowColor: Colors.grey,
+                    child: Container(
+                      margin: const EdgeInsets.all(5.0),
+                      alignment: Alignment.topLeft,
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Set this property to start from the left
+                        children: [
+                          const Text(
+                            'Plan includes :',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          const Text('1. 1 GB Storage'),
+                          const Text('2. 1 User'),
+                          const Text('3. 1 Device'),
+                          const Text('4. 1 Year'),
+                          const Text('5. 1 Car'),
+                          const Text('6. 1 Driver'),
+                          const Text('7. 1 Location'),
+                          const Text('8. 1 Emergency Contact'),
+                          ElevatedButton(
+                            onPressed: () => {},
+                            child: const Text('\$25 Purchase'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            //Standard Plan
+            Container(
+              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.cyan[200],
+                border: Border.all(color: Colors.grey),
+              ),
+              padding: const EdgeInsets.all(10.0),
+              child: ExpansionTile(
+                title: const Text('Standard Plan'),
+                children: [
+                  Card(
+                    shadowColor: Colors.grey,
+                    child: Container(
+                      margin: const EdgeInsets.all(5.0),
+                      alignment: Alignment.topLeft,
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Set this property to start from the left
+                        children: [
+                          const Text(
+                            'Plan includes :',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          const Text('1. 1 GB Storage'),
+                          const Text('2. 1 User'),
+                          const Text('3. 1 Device'),
+                          const Text('4. 1 Year'),
+                          const Text('5. 1 Car'),
+                          const Text('6. 1 Driver'),
+                          const Text('7. 1 Location'),
+                          const Text('8. 1 Emergency Contact'),
+                          ElevatedButton(
+                            onPressed: () => {},
+                            child: const Text('\$75 Purchase'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            //Premium Plan
+            Container(
+              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: Colors.cyan[200],
+                border: Border.all(color: Colors.grey),
+              ),
+              padding: const EdgeInsets.all(10.0),
+              child: ExpansionTile(
+                title: const Text('Premium Plan'),
+                children: [
+                  Card(
+                    shadowColor: Colors.grey,
+                    child: Container(
+                      margin: const EdgeInsets.all(5.0),
+                      alignment: Alignment.topLeft,
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Set this property to start from the left
+                        children: [
+                          const Text(
+                            'Plan includes :',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          const Text('1. 1 GB Storage'),
+                          const Text('2. 1 User'),
+                          const Text('3. 1 Device'),
+                          const Text('4. 1 Year'),
+                          const Text('5. 1 Car'),
+                          const Text('6. 1 Driver'),
+                          const Text('7. 1 Location'),
+                          const Text('8. 1 Emergency Contact'),
+                          ElevatedButton(
+                            onPressed: () => {},
+                            child: const Text('\$120 Purchase'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

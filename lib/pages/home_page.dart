@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.pop(context);
     //navigate to subscription page
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Subscription()));
+        context, MaterialPageRoute(builder: (context) => const MySubscription()));
   }
 
   //go to setting page
