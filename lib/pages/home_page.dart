@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:secure_me/components/drawer.dart';
 import 'package:secure_me/pages/profile_page.dart';
 import 'package:secure_me/pages/setting_page.dart';
+import 'package:secure_me/pages/subscription_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +27,15 @@ class _HomePageState extends State<HomePage> {
         context, MaterialPageRoute(builder: (context) => const ProfilePage()));
   }
 
+  //go to subscription page
+  void goToSubscriptionPage() {
+    //pop drawer
+    Navigator.pop(context);
+    //navigate to subscription page
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Subscription()));
+  }
+
   //go to setting page
   void goToSettingPage() {
     //pop drawer
@@ -46,6 +56,7 @@ class _HomePageState extends State<HomePage> {
       ),
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
+        onSubscriptionTap: goToSubscriptionPage,
         onSettingTap: goToSettingPage,
         signOut: signOut,
       ),

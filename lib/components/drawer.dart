@@ -3,12 +3,14 @@ import 'package:secure_me/components/list_tile.dart';
 
 class MyDrawer extends StatelessWidget {
   final void Function()? onProfileTap;
+  final void Function()? onSubscriptionTap;
   final void Function()? onSettingTap;
   final void Function()? signOut;
 
   const MyDrawer({
     required this.onProfileTap,
     required this.onSettingTap,
+    required this.onSubscriptionTap,
     required this.signOut,
     super.key,
   });
@@ -36,6 +38,12 @@ class MyDrawer extends StatelessWidget {
                 icon: Icons.person,
                 title: 'P R O F I L E',
                 onTap: onProfileTap,
+              ),
+              //subscription tile
+              MyListTile(
+                icon: Icons.add_shopping_cart_rounded,
+                title: 'S U B S C R I P T I O N',
+                onTap: onSubscriptionTap,
               ),
               //settings tile
               MyListTile(
