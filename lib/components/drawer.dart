@@ -62,6 +62,10 @@ class MyDrawer extends StatelessWidget {
               onTap: signOut,
             ),
           ),
+          const ListTile(
+            title: Text('Developer :'),
+            subtitle: Text('Md Mehedi Hasan'),
+          )
         ],
       ),
     );

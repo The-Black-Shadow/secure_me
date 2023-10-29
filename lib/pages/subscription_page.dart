@@ -22,6 +22,14 @@ class _MySubscriptionState extends State<MySubscription> {
         engineController.text);
   }
 
+  @override
+  void dispose() {
+    brandController.text;
+    regController.text;
+    engineController.text;
+    super.dispose();
+  }
+
   Future addUserData(
     String name,
     String carModel,
@@ -40,6 +48,10 @@ class _MySubscriptionState extends State<MySubscription> {
         'Car Engine': carEngine,
       });
 
+      //clear all controller
+      brandController.clear();
+      regController.clear();
+      engineController.clear();
       // Show a Snackbar to indicate success.
       const snackBar = SnackBar(
         content: Text('Subscription added successfully'),
@@ -114,7 +126,13 @@ class _MySubscriptionState extends State<MySubscription> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => {
+              Navigator.pop(context),
+              //clear all controller
+              brandController.clear(),
+              regController.clear(),
+              engineController.clear(),
+            },
             child: const Text('Cancel'),
           ),
           TextButton(

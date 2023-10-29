@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         .map((QuerySnapshot querySnapshot) => querySnapshot.docs);
   }
 
-  Widget PlanCard(DocumentSnapshot plan) {
+  Widget planCard(DocumentSnapshot plan) {
     Map<String, dynamic> data = plan.data() as Map<String, dynamic>;
 
     return Card(
@@ -75,9 +75,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget planList(String userId) {
+  Widget planList(String userEmail) {
     return StreamBuilder<List<DocumentSnapshot>>(
-      stream: getPlansForUser(userId),
+      stream: getPlansForUser(userEmail),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
           List<Widget> planCards =
-              snapshot.data!.map((plan) => PlanCard(plan)).toList();
+              snapshot.data!.map((plan) => planCard(plan)).toList();
           return ListView(
             children: planCards,
           );
