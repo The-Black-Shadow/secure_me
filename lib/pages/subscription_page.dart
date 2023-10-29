@@ -28,16 +28,32 @@ class _MySubscriptionState extends State<MySubscription> {
     String regNo,
     String carEngine,
   ) async {
-    await FirebaseFirestore.instance
-        .collection("Subscriptions")
-        .doc(currentUser.email)
-        .collection('Plans')
-        .add({
-      'Package': name,
-      'Car Model': carModel,
-      'Car Reg': regNo,
-      'Car Engine': carEngine,
-    });
+    try {
+      await FirebaseFirestore.instance
+          .collection("Subscriptions")
+          .doc(currentUser.email)
+          .collection('Plans')
+          .add({
+        'Package': name,
+        'Car Model': carModel,
+        'Car Reg': regNo,
+        'Car Engine': carEngine,
+      });
+
+      // Show a Snackbar to indicate success.
+      const snackBar = SnackBar(
+        content: Text('Subscription added successfully'),
+      );
+
+      // Get the ScaffoldMessenger from the context and show the Snackbar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      // Handle any errors, e.g., show an error Snackbar.
+      final snackBar = SnackBar(
+        content: Text('Error: $e'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   void buyPlan(String planNamee, String price) {

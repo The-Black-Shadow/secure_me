@@ -13,7 +13,7 @@ class SubsPlan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 20.0, right: 20.0),
+      margin: const EdgeInsets.only(left: 20.0, right: 20.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.grey),

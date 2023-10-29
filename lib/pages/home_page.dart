@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:secure_me/components/drawer.dart';
@@ -32,8 +33,8 @@ class _HomePageState extends State<HomePage> {
     //pop drawer
     Navigator.pop(context);
     //navigate to subscription page
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const MySubscription()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const MySubscription()));
   }
 
   //go to setting page
@@ -43,6 +44,56 @@ class _HomePageState extends State<HomePage> {
     //navigate to setting page
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const SettingPage()));
+  }
+
+//get all plans for user
+  Stream<List<DocumentSnapshot>> getPlansForUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection("Subscriptions")
+        .doc(userId)
+        .collection("Plans")
+        .snapshots()
+        .map((QuerySnapshot querySnapshot) => querySnapshot.docs);
+  }
+
+  Widget PlanCard(DocumentSnapshot plan) {
+    Map<String, dynamic> data = plan.data() as Map<String, dynamic>;
+
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: Text("Package: ${data['Package']}"),
+            subtitle: Text("Car Model: ${data['Car Model']}"),
+          ),
+          ListTile(
+            title: Text("Car Reg: ${data['Car Reg']}"),
+            subtitle: Text("Car Engine: ${data['Car Engine']}"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget planList(String userId) {
+    return StreamBuilder<List<DocumentSnapshot>>(
+      stream: getPlansForUser(userId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        } else if (snapshot.hasData) {
+          List<Widget> planCards =
+              snapshot.data!.map((plan) => PlanCard(plan)).toList();
+          return ListView(
+            children: planCards,
+          );
+        } else {
+          return const Text("No plans found.");
+        }
+      },
+    );
   }
 
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -63,6 +114,9 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           Text("Name : ${currentUser.email!}"),
+          Expanded(
+            child: planList(currentUser.email!),
+          ), // Display the user information.)
         ],
       ),
     );
