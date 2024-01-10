@@ -132,6 +132,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+// Refresh user data when pulled down
+  Future<void> _refreshData() async {
+    await fetchUserName(); // Refresh user data when pulled down
+    // Add any other refresh logic here
+    setState(() {});
+  }
+
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
@@ -149,19 +156,42 @@ class _HomePageState extends State<HomePage> {
         onSettingTap: goToSettingPage,
         signOut: signOut,
       ),
-      body: Column(
-        children: [
-          // Call the StyledCard widget here
-          StyledCard(
-            userName: userName,
-            userEmail: userEmail,
-            userAddress: userAddress,
-            phone: phone,
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              StyledCard(
+                userName: userName,
+                userEmail: FirebaseAuth.instance.currentUser!.email!,
+                userAddress: userAddress,
+                phone: phone,
+              ),
+              SizedBox(height: 16), // Add some space between widgets
+              StreamBuilder<List<DocumentSnapshot>>(
+                stream:
+                    getPlansForUser(FirebaseAuth.instance.currentUser!.email!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.hasData) {
+                    List<Widget> planCards =
+                        snapshot.data!.map((plan) => planCard(plan)).toList();
+                    return Column(
+                      children: planCards,
+                    );
+                  } else {
+                    return const Text("No plans found.");
+                  }
+                },
+              ),
+            ],
           ),
-          Expanded(
-            child: planList(currentUser.email!),
-          ), // Display the user information.)
-        ],
+        ),
       ),
     );
   }
