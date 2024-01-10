@@ -1,316 +1,192 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-class MySubscription extends StatefulWidget {
-  const MySubscription({super.key});
-
-  @override
-  State<MySubscription> createState() => _MySubscriptionState();
-}
-
-class _MySubscriptionState extends State<MySubscription> {
-  final brandController = TextEditingController();
-  final regController = TextEditingController();
-  final engineController = TextEditingController();
-  String? planName;
-  String? planPrice;
-  final currentUser = FirebaseAuth.instance.currentUser!;
-
-  Future addPlan(planName, planPrice) async {
-    addUserData(planName, brandController.text, regController.text,
-        engineController.text);
-  }
-
-  @override
-  void dispose() {
-    brandController.text;
-    regController.text;
-    engineController.text;
-    super.dispose();
-  }
-
-  Future addUserData(
-    String name,
-    String carModel,
-    String regNo,
-    String carEngine,
-  ) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection("Subscriptions")
-          .doc(currentUser.email)
-          .collection('Plans')
-          .add({
-        'Package': name,
-        'Car Model': carModel,
-        'Car Reg': regNo,
-        'Car Engine': carEngine,
-      });
-
-      //clear all controller
-      brandController.clear();
-      regController.clear();
-      engineController.clear();
-      // Show a Snackbar to indicate success.
-      const snackBar = SnackBar(
-        content: Text('Subscription added successfully'),
-      );
-
-      // Get the ScaffoldMessenger from the context and show the Snackbar.
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } catch (e) {
-      // Handle any errors, e.g., show an error Snackbar.
-      final snackBar = SnackBar(
-        content: Text('Error: $e'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  void buyPlan(String planNamee, String price) {
-    planPrice = price;
-    planName = planNamee;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('You have selected $planName'),
-        backgroundColor: Colors.cyan[200],
-        content: SizedBox(
-          height: 400,
-          width: 300,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  'Enter Your Car Brand Name : ',
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 10.0),
-                TextFormField(
-                  controller: brandController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Car Brand Name',
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                //Car registration number
-                const Text(
-                  'Enter Car Registration Number : ',
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 10.0),
-                TextFormField(
-                  controller: regController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Car Registration Details',
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                //Car engine number
-                const Text(
-                  'Enter Car Engine Number : ',
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(height: 10.0),
-                TextFormField(
-                  controller: engineController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Car Engine Number',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => {
-              Navigator.pop(context),
-              //clear all controller
-              brandController.clear(),
-              regController.clear(),
-              engineController.clear(),
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => {
-              addPlan(planName, planPrice),
-              Navigator.pop(context),
-            },
-            child: const Text('Purchase'),
-          ),
-        ],
-      ),
-    );
-  }
-
+class SubscriptionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.cyan[300],
       appBar: AppBar(
-        title: const Text('Subscription'),
-        backgroundColor: Colors.cyan[800],
+        title: const Text('Subscription Packages'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //Basic Plan
-            Container(
-              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: Colors.cyan[200],
-                border: Border.all(color: Colors.grey),
-              ),
-              padding: const EdgeInsets.all(10.0),
-              child: ExpansionTile(
-                title: const Text('Basic Plan'),
-                children: [
-                  Card(
-                    shadowColor: Colors.grey,
-                    child: Container(
-                      margin: const EdgeInsets.all(5.0),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start, // Set this property to start from the left
-                        children: [
-                          const Text(
-                            'Plan includes :',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              decoration: TextDecoration.underline,
-                            ),
+      body: SubscriptionPackages(),
+    );
+  }
+}
+
+class SubscriptionPackages extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('SubscriptionPackages')
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final List<QueryDocumentSnapshot> documents = snapshot.data!.docs;
+
+        return ListView.builder(
+          itemCount: documents.length,
+          itemBuilder: (BuildContext context, int index) {
+            final Map<String, dynamic> data =
+                documents[index].data() as Map<String, dynamic>;
+
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16),
+                  title: Text(data['packageName'] ?? 'Package Name',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(data['packageDetails'] ?? 'Package Details'),
+                  trailing: Text(
+                    data['packagePrice'] != null
+                        ? '\$${data['packagePrice']}'
+                        : 'Price',
+                    style: const TextStyle(
+                        fontSize: 26), // Adjust the font size here
+                  ),
+                  onTap: () {
+                    TextEditingController brandController =
+                        TextEditingController();
+                    TextEditingController modelController =
+                        TextEditingController();
+                    TextEditingController regController =
+                        TextEditingController();
+                    TextEditingController engineController =
+                        TextEditingController();
+
+                    final currentUser = FirebaseAuth.instance.currentUser;
+
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Purchase ${data['packageName']}'),
+                        content: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: brandController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Car Brand',
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter car brand',
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: modelController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Car Model',
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter car model',
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: regController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Car Register',
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter car register',
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: engineController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Car Engine',
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Enter car engine',
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 10.0),
-                          const Text('1. 1 GB Storage'),
-                          const Text('2. 1 User'),
-                          const Text('3. 1 Device'),
-                          const Text('4. 1 Year'),
-                          const Text('5. 1 Car'),
-                          const Text('6. 1 Driver'),
-                          const Text('7. 1 Location'),
-                          const Text('8. 1 Emergency Contact'),
-                          ElevatedButton(
-                            onPressed: () => buyPlan('Basic Plan', '\$50'),
-                            child: const Text('\$50 Purchase'),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              String brand = brandController.text.trim();
+                              String model = modelController.text.trim();
+                              String reg = regController.text.trim();
+                              String engine = engineController.text.trim();
+
+                              if (brand.isNotEmpty &&
+                                  model.isNotEmpty &&
+                                  engine.isNotEmpty) {
+                                try {
+                                  // Calculate expiration date (1 year validity)
+                                  DateTime currentDate = DateTime.now();
+                                  DateTime expirationDate = currentDate.add(Duration(days: 365));
+
+                                  await FirebaseFirestore.instance
+                                      .collection('Subscriptions')
+                                      .doc(currentUser!.email)
+                                      .collection('Plans')
+                                      .add({
+                                    'Package': data['packageName'],
+                                    'Car Brand': brand,
+                                    'Car Model': model,
+                                    'Car Reg': reg,
+                                    'Car Engine': engine,
+                                    'Expiration Date': expirationDate,
+                                  });
+
+                                  brandController.clear();
+                                  modelController.clear();
+                                  regController.clear();
+                                  engineController.clear();
+
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  print('Error adding data: $e');
+                                }
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Error'),
+                                    content:
+                                        const Text('Please fill all fields.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Purchase'),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                ],
+                    );
+                  },
+                ),
               ),
-            ),
-            //Standard Plan
-            Container(
-              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: Colors.cyan[200],
-                border: Border.all(color: Colors.grey),
-              ),
-              padding: const EdgeInsets.all(10.0),
-              child: ExpansionTile(
-                title: const Text('Standard Plan'),
-                children: [
-                  Card(
-                    shadowColor: Colors.grey,
-                    child: Container(
-                      margin: const EdgeInsets.all(5.0),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start, // Set this property to start from the left
-                        children: [
-                          const Text(
-                            'Plan includes :',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          const Text('1. 1 GB Storage'),
-                          const Text('2. 1 User'),
-                          const Text('3. 1 Device'),
-                          const Text('4. 1 Year'),
-                          const Text('5. 1 Car'),
-                          const Text('6. 1 Driver'),
-                          const Text('7. 1 Location'),
-                          const Text('8. 1 Emergency Contact'),
-                          ElevatedButton(
-                            onPressed: () => buyPlan('Standard Plan', '\$75'),
-                            child: const Text('\$75 Purchase'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            //Premium Plan
-            Container(
-              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 40.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: Colors.cyan[200],
-                border: Border.all(color: Colors.grey),
-              ),
-              padding: const EdgeInsets.all(10.0),
-              child: ExpansionTile(
-                title: const Text('Premium Plan'),
-                children: [
-                  Card(
-                    shadowColor: Colors.grey,
-                    child: Container(
-                      margin: const EdgeInsets.all(5.0),
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start, // Set this property to start from the left
-                        children: [
-                          const Text(
-                            'Plan includes :',
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          const Text('1. 1 GB Storage'),
-                          const Text('2. 1 User'),
-                          const Text('3. 1 Device'),
-                          const Text('4. 1 Year'),
-                          const Text('5. 1 Car'),
-                          const Text('6. 1 Driver'),
-                          const Text('7. 1 Location'),
-                          const Text('8. 1 Emergency Contact'),
-                          ElevatedButton(
-                            onPressed: () => buyPlan('Premium Plan', '\$120'),
-                            child: const Text('\$120 Purchase'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 50),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

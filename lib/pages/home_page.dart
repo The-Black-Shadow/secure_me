@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:secure_me/components/drawer.dart';
 import 'package:secure_me/pages/profile_page.dart';
 import 'package:secure_me/pages/setting_page.dart';
@@ -37,8 +38,8 @@ class _HomePageState extends State<HomePage> {
     //pop drawer
     Navigator.pop(context);
     //navigate to subscription page
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const MySubscription()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SubscriptionPage()));
   }
 
   //go to setting page
@@ -95,16 +96,66 @@ class _HomePageState extends State<HomePage> {
   Widget planCard(DocumentSnapshot plan) {
     Map<String, dynamic> data = plan.data() as Map<String, dynamic>;
 
+    DateTime expirationDate = data['Expiration Date']?.toDate();
+    String formattedExpirationDate = expirationDate != null
+        ? DateFormat.yMMMMd().format(expirationDate)
+        : 'N/A';
+
+    int validityDays = expirationDate != null
+        ? expirationDate.difference(DateTime.now()).inDays
+        : 0;
+
     return Card(
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            title: Text("Package: ${data['Package']}"),
-            subtitle: Text("Car Model: ${data['Car Model']}"),
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text("Package: ${data['Package']}"),
+                  subtitle: Text("Car Model: ${data['Car Model']}"),
+                ),
+                ListTile(
+                  title: Text("Car Reg: ${data['Car Reg']}"),
+                  subtitle: Text("Car Engine: ${data['Car Engine']}"),
+                ),
+                ListTile(
+                  title: Text("Expiration Date: $formattedExpirationDate"),
+                ),
+              ],
+            ),
           ),
-          ListTile(
-            title: Text("Car Reg: ${data['Car Reg']}"),
-            subtitle: Text("Car Engine: ${data['Car Engine']}"),
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 40),
+                Text(
+                  'Validity:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$validityDays days',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Functionality for printing
+                  },
+                  child: Text('Print'),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -143,8 +194,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-// Replace with actual username
-    String userEmail = currentUser.email!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.cyan[800],
