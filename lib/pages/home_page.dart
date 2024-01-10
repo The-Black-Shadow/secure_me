@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -169,13 +169,21 @@ class _HomePageState extends State<HomePage> {
                 userAddress: userAddress,
                 phone: phone,
               ),
-              SizedBox(height: 16), // Add some space between widgets
+              const SizedBox(height: 16), // Add some space between widgets
+              const Text('Your Plans',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  )),
+              const SizedBox(height: 16), // Add some space between widgets
               StreamBuilder<List<DocumentSnapshot>>(
                 stream:
                     getPlansForUser(FirebaseAuth.instance.currentUser!.email!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.hasData) {
