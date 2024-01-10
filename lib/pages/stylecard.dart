@@ -17,7 +17,6 @@ class StyledCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
@@ -27,15 +26,15 @@ class StyledCard extends StatelessWidget {
                 children: [
                   Text(
                     'Welcome, $userName',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Email: $userEmail',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
                     ),
@@ -43,36 +42,32 @@ class StyledCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: 16),
-            // Wrap the AnalogClock in a Container with a fixed height
-            Container(
-              height: 200, // Adjust the height as needed
-              child: AnalogClock(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 2.0, color: Colors.black),
-                  color: Colors.transparent,
-                  shape: BoxShape.circle,
-                ),
-                width: 100,
-                isLive: true,
-                showNumbers: false,
-                showTicks: true,
-                hourHandColor: Colors.black,
-                minuteHandColor: Colors.black,
-                secondHandColor: Colors.red,
-              ),
-            ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               flex: 3,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    DateFormat('EEEE, MMMM d, y').format(DateTime.now()),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(
+                    height:
+                        150, // Adjust the height as needed for the AnalogClock
+                    width: 150, // Adjust the width if necessary
+                    child: AnalogClock(
+                        // AnalogClock parameters remain the same
+                        // ...
+                        ),
+                  ),
+                  const SizedBox(height: 7),
+                  SizedBox(
+                    // Constrain the height of the date Text widget
+                    height: 30,
+                    child: Text(
+                      DateFormat('EEEE, MMMM d, y').format(DateTime.now()),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                 ],
