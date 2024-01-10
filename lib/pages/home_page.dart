@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   //get user information
-  Future<void> fetchUserName() async {
+  Future<void> fetchUserData() async {
     String userEmail = FirebaseAuth.instance.currentUser!.email!;
 
     try {
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    fetchUserName();
+    fetchUserData();
   }
 
 //get all plans for user
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
 
 // Refresh user data when pulled down
   Future<void> _refreshData() async {
-    await fetchUserName(); // Refresh user data when pulled down
+    await fetchUserData(); // Refresh user data when pulled down
     // Add any other refresh logic here
     setState(() {});
   }
