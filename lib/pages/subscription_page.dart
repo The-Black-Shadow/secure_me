@@ -79,49 +79,51 @@ class _MySubscriptionState extends State<MySubscription> {
         content: SizedBox(
           height: 400,
           width: 300,
-          child: Column(
-            children: [
-              const Text(
-                'Enter Your Car Brand Name : ',
-                textAlign: TextAlign.start,
-              ),
-              const SizedBox(height: 10.0),
-              TextFormField(
-                controller: brandController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Car Brand Name',
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text(
+                  'Enter Your Car Brand Name : ',
+                  textAlign: TextAlign.start,
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              //Car registration number
-              const Text(
-                'Enter Car Registration Number : ',
-                textAlign: TextAlign.start,
-              ),
-              const SizedBox(height: 10.0),
-              TextFormField(
-                controller: regController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Car Registration Details',
+                const SizedBox(height: 10.0),
+                TextFormField(
+                  controller: brandController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Car Brand Name',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              //Car engine number
-              const Text(
-                'Enter Car Engine Number : ',
-                textAlign: TextAlign.start,
-              ),
-              const SizedBox(height: 10.0),
-              TextFormField(
-                controller: engineController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Car Engine Number',
+                const SizedBox(height: 10.0),
+                //Car registration number
+                const Text(
+                  'Enter Car Registration Number : ',
+                  textAlign: TextAlign.start,
                 ),
-              ),
-            ],
+                const SizedBox(height: 10.0),
+                TextFormField(
+                  controller: regController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Car Registration Details',
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                //Car engine number
+                const Text(
+                  'Enter Car Engine Number : ',
+                  textAlign: TextAlign.start,
+                ),
+                const SizedBox(height: 10.0),
+                TextFormField(
+                  controller: engineController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Car Engine Number',
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         actions: [

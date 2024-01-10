@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:secure_me/components/drawer.dart';
 import 'package:secure_me/pages/profile_page.dart';
 import 'package:secure_me/pages/setting_page.dart';
+import 'package:secure_me/pages/stylecard.dart';
 import 'package:secure_me/pages/subscription_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String userName = "";
   //sign out function
   void signOut() async {
     await FirebaseAuth.instance.signOut();
@@ -44,6 +46,36 @@ class _HomePageState extends State<HomePage> {
     //navigate to setting page
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const SettingPage()));
+  }
+
+  //get user information
+  Future<void> fetchUserName() async {
+    String userEmail = FirebaseAuth.instance.currentUser!.email!;
+
+    try {
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userEmail)
+          .get();
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic> userData =
+            userSnapshot.data() as Map<String, dynamic>;
+        setState(() {
+          userName = userData['Name'];
+        });
+      } else {
+        print('Document does not exist for the logged-in user.');
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
   }
 
 //get all plans for user
@@ -100,6 +132,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    String userNamee = userName; // Replace with actual username
+    String userEmail = currentUser.email!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.cyan[800],
@@ -113,7 +147,15 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          Text("Name : ${currentUser.email!}"),
+          // Call the StyledCard widget here
+          StyledCard(
+            userName: userName,
+            userEmail: userEmail,
+          ),
+          Text(
+            "Email : ${currentUser.email!}",
+            style: TextStyle(fontSize: 20),
+          ),
           Expanded(
             child: planList(currentUser.email!),
           ), // Display the user information.)
