@@ -5,9 +5,16 @@ import 'package:intl/intl.dart';
 class StyledCard extends StatelessWidget {
   final String userName;
   final String userEmail;
+  final String userAddress;
+  final String phone;
 
-  const StyledCard({Key? key, required this.userName, required this.userEmail})
-      : super(key: key);
+  const StyledCard({
+    Key? key,
+    required this.userName,
+    required this.userEmail,
+    required this.userAddress,
+    required this.phone,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +41,22 @@ class StyledCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Email: $userEmail',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Address: $userAddress',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Phone: $phone',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,

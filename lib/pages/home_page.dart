@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String userName = "";
+  String userAddress = "";
+  String phone = "";
   //sign out function
   void signOut() async {
     await FirebaseAuth.instance.signOut();
@@ -63,6 +65,8 @@ class _HomePageState extends State<HomePage> {
             userSnapshot.data() as Map<String, dynamic>;
         setState(() {
           userName = userData['Name'];
+          userAddress = userData['Address'];
+          phone = userData['Phone'];
         });
       } else {
         print('Document does not exist for the logged-in user.');
@@ -151,6 +155,8 @@ class _HomePageState extends State<HomePage> {
           StyledCard(
             userName: userName,
             userEmail: userEmail,
+            userAddress: userAddress,
+            phone: phone,
           ),
           Expanded(
             child: planList(currentUser.email!),
