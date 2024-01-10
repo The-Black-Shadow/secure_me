@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    String userNamee = userName; // Replace with actual username
+// Replace with actual username
     String userEmail = currentUser.email!;
     return Scaffold(
       appBar: AppBar(
@@ -151,10 +151,6 @@ class _HomePageState extends State<HomePage> {
           StyledCard(
             userName: userName,
             userEmail: userEmail,
-          ),
-          Text(
-            "Email : ${currentUser.email!}",
-            style: TextStyle(fontSize: 20),
           ),
           Expanded(
             child: planList(currentUser.email!),
