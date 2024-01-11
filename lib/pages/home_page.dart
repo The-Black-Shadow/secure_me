@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:secure_me/components/drawer.dart';
+import 'package:secure_me/components/pdf_generation.dart';
 import 'package:secure_me/pages/profile_page.dart';
 import 'package:secure_me/pages/setting_page.dart';
 import 'package:secure_me/pages/stylecard.dart';
@@ -133,8 +137,8 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
-                Text(
+                const SizedBox(height: 40),
+                const Text(
                   'Validity:',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -142,17 +146,40 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Text(
                   '$validityDays days',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Functionality for printing
+                  onPressed: () async {
+                    // Request permissions
+                    var status = await Permission.storage.request();
+
+                    if (status == PermissionStatus.granted) {
+                      // Functionality for printing
+                      Map<String, dynamic> packageInfo = {
+                        'Package': data['Package'],
+                        'Car Model': data['Car Model'],
+                        'Car Reg': data['Car Reg'],
+                        'Car Engine': data['Car Engine'],
+                        // Add other necessary package information
+                      };
+                      try {
+                        // Generate PDF
+                        String pdfPath = await generatePdf(packageInfo);
+
+                        // Open the generated PDF file
+                        OpenFile.open(pdfPath);
+                      } catch (e) {
+                        print('Error generating or opening PDF: $e');
+                      }
+                    } else {
+                      print('Permission denied');
+                    }
                   },
-                  child: Text('Print'),
+                  child: const Text('Print'),
                 ),
               ],
             ),
