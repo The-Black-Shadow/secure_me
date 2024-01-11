@@ -160,10 +160,16 @@ class _HomePageState extends State<HomePage> {
                     if (status == PermissionStatus.granted) {
                       // Functionality for printing
                       Map<String, dynamic> packageInfo = {
+                        'Name': userName,
+                        'Address': userAddress,
+                        'Phone': phone,
+                        'Email': FirebaseAuth.instance.currentUser!.email!,
                         'Package': data['Package'],
+                        'Car Brand': data['Car Brand'],
                         'Car Model': data['Car Model'],
                         'Car Reg': data['Car Reg'],
                         'Car Engine': data['Car Engine'],
+                        'Expiration Date': formattedExpirationDate,
                         // Add other necessary package information
                       };
                       try {
