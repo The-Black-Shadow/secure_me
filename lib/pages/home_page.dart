@@ -119,12 +119,21 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: Text("Package: ${data['Package']}"),
-                  subtitle: Text("Car Model: ${data['Car Model']}"),
+                  title: Text("Package: ${data['Package']}",
+                      style: TextStyle(fontSize: 23)),
+                  subtitle: Text(
+                    "Car Brand: ${data['Car Brand']}",
+                    style: TextStyle(fontSize: 17),
+                  ),
+                ),
+                ListTile(
+                  title: Text("Car Model: ${data['Car Model']}",
+                      style: TextStyle(fontSize: 17)),
                 ),
                 ListTile(
                   title: Text("Car Reg: ${data['Car Reg']}"),
-                  subtitle: Text("Car Engine: ${data['Car Engine']}"),
+                  subtitle: Text("Car Engine: ${data['Car Engine']}",
+                      style: TextStyle(fontSize: 17)),
                 ),
                 ListTile(
                   title: Text("Expiration Date: $formattedExpirationDate"),
