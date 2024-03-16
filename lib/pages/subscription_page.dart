@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:secure_me/components/stripe_webview.dart';
 
 class SubscriptionPage extends StatelessWidget {
   @override
@@ -160,35 +161,43 @@ class SubscriptionPackages extends StatelessWidget {
     );
   }
 
-  Future<void> _stripeCheckout(BuildContext context, Map<String, dynamic> data,
-      TextEditingController brandController, TextEditingController modelController,
-      TextEditingController regController, TextEditingController engineController) async {
-    // Call the Stripe checkout functionality here
-    // Example:
-    try {
-      // Perform Stripe checkout
-      // This is a placeholder, you need to implement the actual Stripe checkout process
-      // For example:
-      // await StripePayment.createPaymentMethod()
-      // Handle payment success and call _handlePurchase
+ Future<void> _stripeCheckout(BuildContext context, Map<String, dynamic> data,
+    TextEditingController brandController, TextEditingController modelController,
+    TextEditingController regController, TextEditingController engineController) async {
+  // Example Stripe checkout URL
+  final stripeCheckoutUrl = 'https://buy.stripe.com/test_7sI7sw0Uxdvq8w0eUV';
+
+  try {
+    // Launch Stripe checkout web view
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StripeCheckoutWebView(url: stripeCheckoutUrl),
+      ),
+    );
+
+    // Check if payment was successful
+    if (result == 'success') {
+      // If payment was successful, handle the purchase
       _handlePurchase(context, data, brandController, modelController, regController, engineController);
-    } catch (e) {
-      print('Error during Stripe checkout: $e');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('An error occurred during checkout. Please try again later.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
     }
+  } catch (e) {
+    print('Error launching Stripe checkout: $e');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: const Text('An error occurred during checkout. Please try again later.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
+}
 
   void _handlePurchase(BuildContext context, Map<String, dynamic> data,
       TextEditingController brandController, TextEditingController modelController,
@@ -228,3 +237,5 @@ class SubscriptionPackages extends StatelessWidget {
     }
   }
 }
+
+//==========
