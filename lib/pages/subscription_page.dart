@@ -68,7 +68,8 @@ class SubscriptionPackages extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 26), // Adjust the font size here
                   ),
-                  onTap: () => _purchasePackage(context, data, brandController, modelController, regController, engineController),
+                  onTap: () => _purchasePackage(context, data, brandController,
+                      modelController, regController, engineController),
                 ),
               ),
             );
@@ -78,9 +79,13 @@ class SubscriptionPackages extends StatelessWidget {
     );
   }
 
-  void _purchasePackage(BuildContext context, Map<String, dynamic> data,
-      TextEditingController brandController, TextEditingController modelController,
-      TextEditingController regController, TextEditingController engineController) async {
+  void _purchasePackage(
+      BuildContext context,
+      Map<String, dynamic> data,
+      TextEditingController brandController,
+      TextEditingController modelController,
+      TextEditingController regController,
+      TextEditingController engineController) async {
     final currentUser = FirebaseAuth.instance.currentUser;
 
     showDialog(
@@ -137,7 +142,8 @@ class SubscriptionPackages extends StatelessWidget {
               String engine = engineController.text.trim();
 
               if (brand.isNotEmpty && model.isNotEmpty && engine.isNotEmpty) {
-                _stripeCheckout(context, data, brandController, modelController, regController, engineController);
+                _stripeCheckout(context, data, brandController, modelController,
+                    regController, engineController);
               } else {
                 showDialog(
                   context: context,
@@ -161,47 +167,58 @@ class SubscriptionPackages extends StatelessWidget {
     );
   }
 
- Future<void> _stripeCheckout(BuildContext context, Map<String, dynamic> data,
-    TextEditingController brandController, TextEditingController modelController,
-    TextEditingController regController, TextEditingController engineController) async {
-  // Example Stripe checkout URL
-  final stripeCheckoutUrl = 'https://buy.stripe.com/test_7sI7sw0Uxdvq8w0eUV';
+  Future<void> _stripeCheckout(
+      BuildContext context,
+      Map<String, dynamic> data,
+      TextEditingController brandController,
+      TextEditingController modelController,
+      TextEditingController regController,
+      TextEditingController engineController) async {
+    // Example Stripe checkout URL
+    final stripeCheckoutUrl = 'https://buy.stripe.com/test_7sI7sw0Uxdvq8w0eUV';
 
-  try {
-    // Launch Stripe checkout web view
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => StripeCheckoutWebView(url: stripeCheckoutUrl),
-      ),
-    );
+    try {
+      // Launch Stripe checkout web view
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StripeCheckoutWebView(url: stripeCheckoutUrl),
+        ),
+      );
 
-    // Check if payment was successful
-    if (result == 'success') {
-      // If payment was successful, handle the purchase
-      _handlePurchase(context, data, brandController, modelController, regController, engineController);
+      // Check if payment was successful
+      if (result == 'success') {
+        print('Payment Successssssssssss');
+        // If payment was successful, handle the purchase
+        _handlePurchase(context, data, brandController, modelController,
+            regController, engineController);
+      }
+    } catch (e) {
+      print('Error launching Stripe checkout: $e');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: const Text(
+              'An error occurred during checkout. Please try again later.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
-  } catch (e) {
-    print('Error launching Stripe checkout: $e');
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: const Text('An error occurred during checkout. Please try again later.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
-}
 
-  void _handlePurchase(BuildContext context, Map<String, dynamic> data,
-      TextEditingController brandController, TextEditingController modelController,
-      TextEditingController regController, TextEditingController engineController) async {
+  void _handlePurchase(
+      BuildContext context,
+      Map<String, dynamic> data,
+      TextEditingController brandController,
+      TextEditingController modelController,
+      TextEditingController regController,
+      TextEditingController engineController) async {
     String brand = brandController.text.trim();
     String model = modelController.text.trim();
     String reg = regController.text.trim();
