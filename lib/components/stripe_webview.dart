@@ -43,6 +43,7 @@ class _StripeCheckoutWebViewState extends State<StripeCheckoutWebView> {
         //   SnackBar(content: Text('Payment successful')),
         // );
         // Pop the screen
+        await Future.delayed(const Duration(seconds: 4));
         Navigator.pop(context, 'success');
       }
     });

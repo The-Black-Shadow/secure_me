@@ -247,6 +247,7 @@ class SubscriptionPackages extends StatelessWidget {
       modelController.clear();
       regController.clear();
       engineController.clear();
+      print('Subscription added successfully');
 
       Navigator.pop(context);
     } catch (e) {
